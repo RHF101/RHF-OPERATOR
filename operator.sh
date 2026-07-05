@@ -56,6 +56,10 @@ get_session_email() {
   jq -r '.email // "-"' "$SESSION_FILE" 2>/dev/null
 }
 
+get_session_name() {
+  jq -r '.displayName // "-"' "$SESSION_FILE" 2>/dev/null
+}
+
 get_id_token() {
   jq -r '.idToken // empty' "$SESSION_FILE" 2>/dev/null
 }
@@ -112,12 +116,16 @@ menu_akun() {
 akun_daftar() {
   clear
   echo -e "${C}--- DAFTAR AKUN BARU ---${NC}"
+  read -p "Nama: " nama
   read -p "Email: " email
   read -sp "Password (min 6 karakter): " pass
   echo ""
   read -sp "Ulangi password: " pass2
   echo ""
 
+  if [ -z "$nama" ]; then
+    echo -e "${R}Nama tidak boleh kosong.${NC}"; pause; return
+  fi
   if [ "$pass" != "$pass2" ]; then
     echo -e "${R}Password tidak sama.${NC}"; pause; return
   fi
@@ -136,8 +144,16 @@ akun_daftar() {
     pause; return
   fi
 
-  echo "$resp" | jq "{idToken, email, localId, refreshToken}" > "$SESSION_FILE"
-  echo -e "${G}Akun berhasil dibuat dan langsung login sebagai ${email}${NC}"
+  id_token=$(echo "$resp" | jq -r '.idToken')
+
+  # Set displayName (nama) di profil Firebase Auth
+  curl -s -X POST \
+    "https://identitytoolkit.googleapis.com/v1/accounts:update?key=${FIREBASE_WEB_API_KEY}" \
+    -H "Content-Type: application/json" \
+    -d "{\"idToken\":\"${id_token}\",\"displayName\":\"${nama}\",\"returnSecureToken\":true}" > /dev/null
+
+  echo "$resp" | jq --arg nama "$nama" '. + {displayName: $nama} | {idToken, email, localId, refreshToken, displayName}' > "$SESSION_FILE"
+  echo -e "${G}Akun berhasil dibuat. Selamat datang, ${nama}!${NC}"
   pause
 }
 
@@ -301,7 +317,7 @@ while true; do
   echo "============================================"
   echo -e "${NC}"
   if is_logged_in; then
-    echo -e "Login sebagai: ${G}$(get_session_email)${NC}"
+    echo -e "Login sebagai: ${G}$(get_session_name) ($(get_session_email))${NC}"
   else
     echo -e "Status: ${R}Belum login${NC}"
   fi
