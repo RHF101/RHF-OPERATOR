@@ -15,7 +15,7 @@ if [ ! -f "$CONFIG_FILE" ]; then
   echo ""
   echo '  FIREBASE_WEB_API_KEY="isi_key_di_sini"'
   echo '  DB_URL="isi_url_database_di_sini"'
-  echo '  WEB_ADDRESS="isi_alamat_web_di_sini"'
+  echo '  WEB_ADDRESS="https://rhfzero.vercel.app/index.html"'
   echo ""
   echo "Minta file config.sh ke admin/pemilik proyek."
   exit 1
