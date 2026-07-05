@@ -1,0 +1,5 @@
+# File rahasia - JANGAN pernah upload ke GitHub
+config.sh
+
+# Session lokal user (kalau kebawa masuk folder repo)
+.rhfzero_session
