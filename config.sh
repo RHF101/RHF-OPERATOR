@@ -8,4 +8,4 @@
 
 FIREBASE_WEB_API_KEY="AIzaSyCpcTgKGVavgPa0ymUrmAvEBpuJyPJBMOs"
 DB_URL="https://rhf-zero-7b9c4-default-rtdb.asia-southeast1.firebasedatabase.app"
-WEB_ADDRESS="https://rhfzero888.web.app"
+WEB_ADDRESS="https://rhfzero.vercel.app"
